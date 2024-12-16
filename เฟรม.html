@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Document</title>
+    <style>
+        /* กำหนดพื้นหลังให้เป็นไล่สีแสงเหนือ */
+        body {
+            background: linear-gradient(135deg, #00ff80, #003f4f, #7b005d, #8c0032);
+            background-size: 400% 400%;
+            animation: aurora 10s ease infinite;
+            color: white; /* เปลี่ยนสีตัวอักษรให้เป็นสีขาว */
+        }
+
+        /* สร้างอนิเมชันการเคลื่อนไหวของพื้นหลัง */
+        @keyframes aurora {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* ปรับขนาดของข้อความ Skibidi */
+        h1 {
+            font-size: 100px; /* ขนาดตัวอักษรใหญ่ */
+            text-align: center; /* จัดกลางข้อความ */
+            font-weight: bold; /* ทำให้ตัวหนา */
+            text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5); /* เพิ่มเงาให้ข้อความ */
+        }
+
+        /* ปรับขนาดของข้อความ Hello world! และ สวัสดีชาวโลก */
+        p {
+            font-size: 24px; /* ขนาดตัวอักษรที่ใหญ่ขึ้น */
+            text-align: center; /* จัดกลางข้อความ */
+            font-weight: bold; /* ทำให้ตัวหนา */
+        }
+
+        /* การกำหนดรูปภาพ */
+        .image-container {
+            text-align: center; /* จัดกลางรูป */
+            margin-top: 20px;
+        }
+
+        img {
+            width: 300px; /* ขนาดรูปภาพ */
+            height: auto; /* ให้รักษาสัดส่วนของภาพ */
+            transform: translateX(20px); /* ขยับรูปไปทางขวานิดหน่อย */
+        }
+    </style>
+</head>
+<body>
+    <h1>Skibidi</h1>
+    <p>Hello world!</p><br>
+    <p>สวัสดีชาวโลก</p>
+
+    <!-- แทรกรูปภาพ -->
+    <div class="image-container">
+        <img src="Screenshot 2024-12-16 161125.png" alt="Example Image">
+    </div>
+</body>
+</html>
