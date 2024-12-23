@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .container .item {
+            background-color: rgb(221, 152, 229);
+        }
+        .footer-container .item {
+            background-color: rgb(134, 196, 237);
+        }
+        .button {
+            background-color: rgb(79, 221, 66);
+            padding: 10px;
+        }
+        .button.active {
+            background-color: orange;
+            padding: 10px;
+        }
+        .button.danger {
+            background-color: rgb(236, 27, 31);
+            padding: 10px;
+        }
+        .item1 + .item2 {
+            background-color: rgb(159, 79, 234);
+        }
+        .item2 + .item1 {
+            background-color: rgb(205, 202, 103);
+        }
+        input[type="text"] {
+            background-color: rgb(155, 159, 247);
+            border: 1px;
+            height: 30px;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!--1.item เป็นลูกของ container-->
+    <div class="container">
+        container
+        <div class="item">
+            item
+        </div>
+    </div>
+
+    <!--2. item เป็นลูกของ container แค่ชั้นเดียว-->
+    <div class="footer-container">
+           container
+           <div class="item">
+                item
+                </div>
+                <div class="item">
+                    item 1
+                </div>
+                <div class="item">
+                    item 2
+                </div>
+                <div class="item">
+                    item 3
+                </div>
+            </div>
+    </div>
+
+    <!-- 3. มี class ติดกัน -->
+        <button class="button">ปุ่ม</button>
+        <button class="button active">ปุ่ม</button>
+        <button class="button danger">ปุ่ม</button>
+
+    <!-- 4. เพื่อนกัน adjacent -->
+     <div class="item1">Item 1</div>
+     <div class="item2">Item 2</div>
+
+    <!-- 5. attribute selector -->
+     <input type="text" name="username">
+     <input type="text" name="password">
+     <input type="text" name="email">
+
+</body>
+</html>

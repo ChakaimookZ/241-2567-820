@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .button{
+        background: rgb(201, 229, 116);
+        padding: 10px;
+        border:1px solid black;
+    }
+    .button:hover{
+        background: rgb(245, 144, 36);
+    }
+    .button:active{
+        background: rgb(249, 2, 2);
+    }
+    .button:focus{
+        background: yellow;
+    }
+    input:focus{
+        background: violet;
+    }
+    .container .item:first-child{
+        background: rgb(0, 255, 81);
+    }
+    .container .item:nth-child(2){
+        background: rgb(36, 122, 233);
+    }
+    .container .item:last-child{
+        background: yellow;
+    }
+</style>
+<body>
+    <!-- :hover = วาง , active = คลิก , focus = cursor-->
+    <input type="text">
+    <button class="button">Button</button>
+    <div class="container">
+        <div class="item">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">4</div>
+        <div class="item">5</div>
+    </div>
+
+</body>
+</html>
