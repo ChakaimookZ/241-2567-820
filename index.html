@@ -1,97 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-    @font-face {
-        font-family: 'Kanit';
-        src: url('./Kanit/Kanit-Regular.ttf');
-    }
-    body{
-        font-family: 'Kanit';
-        font-size: 14px;
-        background-color: #add8e6;
-    }
-    .container{
-        width: 400px;
-        margin-left: auto;
-        margin-right: auto;
-        background: rgb(233, 176, 245);
-        padding: 20px;
-    }
-    .header{
-        font-size: 30px;
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .header-form{
-        width: 200px;
-    }
-    .flex{
-        display: flex;
-    }
-    .form-input{
-        margin-bottom: 10px;
-    }
-    input.form, textarea{
-        border: 1px solid #ccc;
-        width: 100%;
-    }
-    .center{
-        text-align: center;
-    }
-    .button{
-        border: 10%;
-        width: 100%;
-        height: 40px;
-    }
-</style>
 <head>
+    <!--ส่วนที่ไม่แสดงออกที่หน้าเว็บ-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+    <style>
+
+        @font-face {
+            font-family: 'kanit';
+            src: url('./Kanit/Kanit-Regular.ttf');
+        }
+
+        body {
+            font-family: 'kanit';
+        }
+        .container {
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            background-color: azure;
+            padding: 20px;
+        }
+        .header {
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header-form {
+            width: 140px;
+        }
+        .flex {
+            display: flex;
+        }
+        .form-input {
+            margin-bottom: 10px;
+        }
+        input.form, textarea {
+            border: 1px solid black;
+            width: 100%;
+        }
+        .center {
+            text-align: center;
+        }
+        .button {
+            border: 0;
+            width: 100%;
+            height: 40px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container"> 
         <div class="header">
-            Register Form
+            Register form
         </div>
         <div class="flex form-input">
             <div class="header-form">ชื่อ</div>
-            <input class="form" type="text">
+            <input class="form" type="text"> 
         </div>
         <div class="flex form-input">
             <div class="header-form">นามสกุล</div>
-            <input class="form" type="text"><br>
+            <input class="form" type="text"> <br>
         </div>
         <div class="flex form-input">
             <div class="header-form">อายุ</div>
-            <input class="form" type="number" min="0" max="100">
+            <input class="form" type="number" min="0" max="150">
         </div>
+
         <div class="flex gender form-input">
-            <div class="header-form">เพศ</div>
-            <div>
-                <input name="gender" type="radio"> ชาย
-                <input name="gender" type="radio"> หญิง
-                <input name="gender" type="radio"> อื่นๆ
+          <div class="header-form">เพศ</div>  
+            <div class="flex">
+                <div>
+                    <input name="gender" type="radio">ชาย
+                </div>
+                <div>
+                    <input name="gender" type="radio">หญิง
+                </div>
+                <div>
+                    <input name="gender" type="radio">อื่นๆ
+                <div>
             </div>
         </div>
         <div class="form-input">
-            <div class="header-form">งานอดิเรก</div>
+            สิ่งที่สนใจ
             <div>
-                <input name="interest" type="checkbox"> ฟังเพลง
+                <input name="interest" type="checkbox">เรียน
             </div>
             <div>
-                <input name="interest" type="checkbox"> ดูหนัง
+                <input name="interest" type="checkbox">เล่นเกม
             </div>
             <div>
-                <input name="interest" type="checkbox"> เล่นเกม
+                <input name="interest" type="checkbox">อ่านหนังสือ
             </div>
         </div>
+
         <div class="form-input">
             คำอธิบายตัวเอง
             <textarea></textarea>
         </div>
-        <div class="center">
-            <button class="button">ส่งข้อมูล</button>
+        <div class="button">
+            <button>ส่งข้อมูล</button>
         </div>
     </div>
 </body>
