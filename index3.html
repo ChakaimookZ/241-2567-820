@@ -4,46 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        .button {
-            background-color: yellow;
-            padding: 10px;
-            border: 0;
-        }
-        .button:hover {
-            background-color: orange;
-        }
-        .button:active {
-            background-color: red;
-        }
-        .button:focus {
-            background-color: green;
-        }
-        input:focus {
-            background-color: blue;
-        }
-        .container .item:first-child {
-            background-color: red;
-        }
-        .container .item:nth-child(4) {
-            background-color: green;
-        }
-        .container .item:last-child {
-            background-color: blue;
-        }
-    </style>
 </head>
+<style>
+    .button{
+        background: green;
+        border:1px solid black;
+        padding: 10px;
+    }
+    .button:hover{
+        background: red;
+    }
+    .button:active{
+        background: blue;
+    }
+    .button:focus{
+        background: yellow;
+    }
+    input:focus{
+        background: violet;
+    }
+    .container .item:first-child{
+        background: red;
+    }
+    .container .item:nth-child(2){
+        background: green;
+    }
+    .container .item:last-child{
+        background: yellow;
+    }
+</style>
 <body>
-    <!-- hover = วาง active = คลิก focus = cursor  -->
-     <input type="text">
+    <!-- :hover = วาง , active = คลิก , focus = cursor-->
+    <input type="text">
     <button class="button">Button</button>
-
     <div class="container">
-        <div class="item">item1</div>
-        <div class="item">item2</div>
-        <div class="item">item3</div>
-        <div class="item">item4</div>
-        <div class="item">item5</div>
+        <div class="item">1</div>
+        <div class="item">2</div>
+        <div class="item">3</div>
+        <div class="item">4</div>
+        <div class="item">5</div>
     </div>
 </body>
 </html>
