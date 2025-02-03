@@ -1,0 +1,11 @@
+docker -v // Docker version 19.03.5 , build 633a0ea
+docker ps // List all running containers
+docker ps --all or docker ps -a // List all containers
+docker run hello-world // Run a containers
+docker rm f9b741966718 // Remove a containers
+docker run -p 9000:80 nginx // Run localhost
+
+linux command
+ls // List all title
+pwd // 
+cd // Change directory
