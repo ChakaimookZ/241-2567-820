@@ -1,0 +1,16 @@
+docker run -p 80:80
+docker ps --all //list all containers
+docker rm <container_id> //remove container
+docker run -d -p 8070:80
+docker exec -it <container_id> bash
+ls //list file
+pwd // print working directory
+cd // change directory
+cat // print file content
+cd .. // go back cd
+exit // exit container
+docker stop <container_id> // stop container
+
+docker system prune // remove all stopped container
+
+npx nodemon node index.js
