@@ -29,7 +29,7 @@ services:
     depends_on:
       - db
     networks:
-      - weblab830  
+      - weblab830
     restart: always
 
 networks:

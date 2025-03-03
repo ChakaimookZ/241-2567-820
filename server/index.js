@@ -1,15 +1,143 @@
-const http = require("http"); //Import Node.js
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql2/promise');  // Ensure you're using mysql2/promise
+const cors = require('cors');
+const app = express();
 
-const host = 'localhost';
-const port = 8000;
+const port = 8080;
+app.use(bodyParser.json());
+app.use(cors());
 
-const requireListener = function (req, res) {
+let conn = null;
 
-    res.writeHead(200);
-    res.end("My first server!");
-}
+// เก็บ user
+let users = [];
+let counter = 1;
 
-const server = http.createServer(requireListener);
-server.listen(port, host, () => {
-    console.log(`Server is running on http://${host}:${port}`);
+/*
+GET /users สำหรับ get users ทั้งหมดที
+POST /user สำหรับสร้าง user ใหม่
+PUT /user/:id สำหรับแก้ไข user ที่มี id ตามที่ระบุ
+DELETE /user/:id สำหรับลบ user ที่มี id ตามที่ระบุ
+*/
+
+const initMYSQL = async () => {
+    conn = await mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'root',
+        database: 'webdb',
+        port: 3306,
+    });
+};
+
+// Test DB connection
+app.get('/testdb', async (req, res) => {
+    try {
+        const [results] = await conn.query('SELECT * FROM users');
+        res.json(results);
+    } catch (error) {
+        console.log('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Test DB with a specific query (example)
+app.get('/testdbnew', async (req, res) => {
+    try {
+        const [results] = await conn.query('SELECT idx FROM users');
+        res.json(results);
+    } catch (error) {
+        console.log('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// GET /users - Fetch all users
+app.get('/users', async (req, res) => {
+    try {
+        const [results] = await conn.query('SELECT * FROM users');
+        res.json(results);
+    } catch (error) {
+        console.log('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// POST /users - Create a new user
+app.post('/users', async (req, res) => {
+    try {
+        let user = req.body;
+        const results = await conn.query('INSERT INTO users SET ?', user);
+        res.json({
+            message: 'User created',
+            data: results[0]
+        });
+    } catch (error) {
+        console.error("error", error.message);
+        res.status(500).json({
+            message: 'something went wrong',
+            errorMessage: error.message
+        })
+        
+    }
+});
+
+// GET /user/:id - Fetch user by ID
+app.get('/users/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        let updateUser = req.body;
+        const results = await conn.query('SELECT * FROM users WHERE id = ?', id);
+        if (results[0].length == 0) {
+
+            throw {statusCode: 404, message: 'User not found'};
+        }
+        res.json(results[0][0]);
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ 
+            message: "something went wrong",
+            errorMessage: error.message});
+    }
+});
+
+// PUT /user/:id - Update user by ID
+app.put('/users/:id', async (req, res) => {
+        let id = req.params.id;
+        let updateUser = req.body;
+        try {
+            let user = req.body
+            const results = await conn.query('UPDATE users SET ? WHERE id = ?', [updateUser, id]);
+            res.json({
+                message: 'Update user successfully',
+                data: results[0]
+            });
+        } catch (error) {
+            console.error('Error:', error.message);
+            res.status(500).json({ 
+                message: "something went wrong",
+                errorMessage: error.message});
+        }
+    });
+
+// DELETE /user/:id - Delete user by ID
+app.delete('/users/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        const results = await conn.query('DELETE FROM users WHERE id = ?', id);
+            res.json({
+                message: 'Delete user successfully',
+                data: results[0]
+            });
+    } catch (error) {
+        console.log('Error:', error.message);
+        res.status(500).json({ 
+            message: "something went wrong",
+            errorMessage: error.message });
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
