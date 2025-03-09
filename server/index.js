@@ -4,23 +4,13 @@ const mysql = require('mysql2/promise');  // Ensure you're using mysql2/promise
 const cors = require('cors');
 const app = express();
 
-const port = 8080;
+const port = 8000;
 app.use(bodyParser.json());
 app.use(cors());
 
 let conn = null;
 
-// เก็บ user
-let users = [];
-let counter = 1;
-
-/*
-GET /users สำหรับ get users ทั้งหมดที
-POST /user สำหรับสร้าง user ใหม่
-PUT /user/:id สำหรับแก้ไข user ที่มี id ตามที่ระบุ
-DELETE /user/:id สำหรับลบ user ที่มี id ตามที่ระบุ
-*/
-
+// Initialize MySQL connection
 const initMYSQL = async () => {
     conn = await mysql.createConnection({
         host: 'localhost',
@@ -29,6 +19,84 @@ const initMYSQL = async () => {
         database: 'webdb',
         port: 3306,
     });
+};
+
+const validateData = (userData) => {
+    let errors = [];
+
+    if (!userData.firstName) {
+        errors.push('กรุณากรอกชื่อ');
+    }
+    if (!userData.lastName) {
+        errors.push('กรุณากรอกนามสกุล');
+    }
+    if (!userData.age) {
+        errors.push('กรุณากรอกอายุ');
+    }
+    if (!userData.gender) {
+        errors.push('กรุณาเลือกเพศ');
+    }
+    if (!userData.interests) {
+        errors.push('กรุณาเลือกความสนใจ');
+    }
+    if (!userData.description) {
+        errors.push('กรุณากรอกคำอธิบาย');
+    }
+    return errors;
+};
+
+const submitData = async () => {
+    let firstNameDOM = document.querySelector('input[name=firstname]');
+    let lastNameDOM = document.querySelector('input[name=lastname]');
+    let ageDOM = document.querySelector('input[name=age]');
+    let genderDOM = document.querySelector('input[name=gender]:checked') || {};
+    let interestDOMs = document.querySelectorAll('input[name=interest]:checked') || [];
+    let descriptionDOM = document.querySelector('textarea[name=description]');
+    let messageDOM = document.getElementById('message');
+
+    try {
+        let interest = Array.from(interestDOMs).map(i => i.value).join(',');
+
+        let userData = {
+            firstName: firstNameDOM.value,  
+            lastName: lastNameDOM.value,
+            age: ageDOM.value,
+            gender: genderDOM.value,
+            interests: interest,
+            description: descriptionDOM.value
+        };
+
+        console.log("submitData", userData);
+
+        const errors = validateData(userData);
+        if (errors.length > 0) {
+            throw {
+                message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                errors: errors
+            };
+        }
+
+        const response = await axios.post('http://localhost:8000/users', userData);
+        console.log('response', response.data);
+        messageDOM.innerText = 'บันทึกข้อมูลเรียบร้อย';
+        messageDOM.className = 'message success';
+    } catch (error) {
+        let htmlData = '<div>';
+        htmlData += `<div> ${error.message} </div>`;
+        htmlData += '<ul>';
+
+        if (error.errors) {
+            for (let i = 0; i < error.errors.length; i++) {
+                htmlData += `<li> ${error.errors[i]} </li>`;
+            }
+        }
+
+        htmlData += '</ul>';
+        htmlData += '</div>';
+        
+        messageDOM.innerText = 'เกิดข้อผิดพลาดในการบันทึกข้อมูล';
+        messageDOM.className = 'message danger';
+    }
 };
 
 // Test DB connection
@@ -69,15 +137,23 @@ app.post('/users', async (req, res) => {
     try {
         let user = req.body;
         const results = await conn.query('INSERT INTO users SET ?', user);
+        if(error.length > 0){
+            throw {
+                message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
+                errors: errors
+            };
+        }
         res.json({
-            message: 'User created',
+            message: 'Create user successfully',
             data: results[0]
         });
     } catch (error) {
-        console.error("error", error.message);
+        const errorMessage = error.message || 'something went wrong';
+        const errors = error.errors || [];
+        console.error("error",error.Message)
         res.status(500).json({
-            message: 'something went wrong',
-            errorMessage: error.message
+            message: 'errorMessage',
+            errors: errors
         })
         
     }
@@ -123,6 +199,7 @@ app.put('/users/:id', async (req, res) => {
 
 // DELETE /user/:id - Delete user by ID
 app.delete('/users/:id', async (req, res) => {
+    
     try {
         let id = req.params.id;
         const results = await conn.query('DELETE FROM users WHERE id = ?', id);
@@ -138,6 +215,7 @@ app.delete('/users/:id', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(port, async () => {
+    await initMYSQL();
+    console.log('Http Server is running on port ' + port);
 });

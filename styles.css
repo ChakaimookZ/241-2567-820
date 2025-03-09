@@ -2,11 +2,11 @@
     font-family: 'Kanit';
     src: url('./Kanit/Kanit-Regular.ttf');
 }
-body{
+body {
     font-family: 'Kanit';
     font-size: 14px;
 }
-.container{
+.container {
     width: 100%;
     max-width: 640px;
     margin-left: auto;
@@ -15,31 +15,45 @@ body{
     padding: 20px;
     box-sizing: border-box;
 }
-.header{
+.header {
     font-size: 30px;
     text-align: center;
     margin-bottom: 20px;
 }
-.header-form{
+.header-form {
     width: 200px;
 }
-.flex{
+.flex {
     display: flex;
 }
-.form-input{
+.form-input {
     margin-bottom: 10px;
 }
 input.form, textarea{
     border: 1px solid #ccc;
     width: 100%;
 }
-.center{
+.center {
     text-align: center;
 }
-.button{
+.button {
     border: 10%;
     width: 50%;
     height: 40px;
+}
+.message {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: lightgray;
+    display: none;
+}
+.message.success{
+    background-color: lightgreen;
+    display: block;
+}
+.message.danger{
+    background-color: lightcoral;
+    display: block;
 }
 
 @media screen and (max-width: 768px){
