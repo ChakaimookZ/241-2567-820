@@ -1,83 +1,92 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2/promise');  // Ensure you're using mysql2/promise
+const mysql = require('mysql2/promise');
 const cors = require('cors');
 const app = express();
 
 const port = 8000;
+
 app.use(bodyParser.json());
 app.use(cors());
 
 let conn = null;
 
-// Initialize MySQL connection
+
 const initMYSQL = async () => {
-    conn = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'root',
-        database: 'webdb',
-        port: 3306,
-    });
+    try {
+        const conn = await mysql.createConnection({
+            host: 'localhost',  // ใช้ localhost หรือ 127.0.0.1
+            user: 'root',
+            password: 'root',
+            database: 'webdb',
+            port: 8830,  // พอร์ตที่ map จาก Docker (8830)
+        });
+        console.log('MySQL connected successfully!');
+    } catch (err) {
+        console.error('MySQL Connection Error:', err.message);
+    }
 };
+
+initMYSQL();
+
 
 const validateData = (userData) => {
-    let errors = [];
+    let errors = []
 
-    if (!userData.firstName) {
-        errors.push('กรุณากรอกชื่อ');
+    if (!userData.firstname) {
+        errors.push('กรุณากรอกชื่อ')
     }
-    if (!userData.lastName) {
-        errors.push('กรุณากรอกนามสกุล');
+    if (!userData.lastname) {
+        errors.push('กรุณากรอกนามสกุล')
     }
     if (!userData.age) {
-        errors.push('กรุณากรอกอายุ');
+        errors.push('กรุณากรอกอายุให้ถูกต้อง')
     }
     if (!userData.gender) {
-        errors.push('กรุณาเลือกเพศ');
-    }
-    if (!userData.interests) {
-        errors.push('กรุณาเลือกความสนใจ');
+        errors.push('กรุณาเลือกเพศ')
     }
     if (!userData.description) {
-        errors.push('กรุณากรอกคำอธิบาย');
+        errors.push('กรุณากรอกรายละเอียด')
     }
+
     return errors;
-};
+}
 
 const submitData = async () => {
-    let firstNameDOM = document.querySelector('input[name=firstname]');
-    let lastNameDOM = document.querySelector('input[name=lastname]');
-    let ageDOM = document.querySelector('input[name=age]');
-    let genderDOM = document.querySelector('input[name=gender]:checked') || {};
-    let interestDOMs = document.querySelectorAll('input[name=interest]:checked') || [];
-    let descriptionDOM = document.querySelector('textarea[name=description]');
-    let messageDOM = document.getElementById('message');
+    let firstnameDOM = document.querySelector('input[name=firstname]')
+    let lastnameDOM = document.querySelector('input[name=lastname]')
+    let ageDOM = document.querySelector('input[name=age]')
+    let genderDOM  = document.querySelector('input[name=gender]:checked') || {}
+    let interestDOMs = Array.from(document.querySelectorAll('input[name=interest]:checked')) ||{}
+    let descriptionDOM = document.querySelector('textarea[name=description]')
+
+    let messageDOM = document.getElementById('message')
 
     try {
-        let interest = Array.from(interestDOMs).map(i => i.value).join(',');
+        let interest = interestDOMs.map(el => el.value).join(',')
 
         let userData = {
-            firstName: firstNameDOM.value,  
-            lastName: lastNameDOM.value,
-            age: ageDOM.value,
-            gender: genderDOM.value,
-            interests: interest,
-            description: descriptionDOM.value
-        };
+            firstname : firstnameDOM.value,
+            lastname : lastnameDOM.value,
+            age : ageDOM.value,
+            gender : genderDOM.value,
+            description : descriptionDOM.value,
+            interests : interest
+        }
 
-        console.log("submitData", userData);
+        console.log('submitData', userData)
+        const errors = validateData(userData)
 
-        const errors = validateData(userData);
         if (errors.length > 0) {
             throw {
                 message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
                 errors: errors
-            };
+            }
         }
 
         const response = await axios.post('http://localhost:8000/users', userData);
         console.log('response', response.data);
+        
         messageDOM.innerText = 'บันทึกข้อมูลเรียบร้อย';
         messageDOM.className = 'message success';
     } catch (error) {
@@ -99,123 +108,97 @@ const submitData = async () => {
     }
 };
 
-// Test DB connection
-app.get('/testdb', async (req, res) => {
-    try {
-        const [results] = await conn.query('SELECT * FROM users');
-        res.json(results);
-    } catch (error) {
-        console.log('Error:', error.message);
-        res.status(500).json({ error: error.message });
+const checkDBConnection = (req, res, next) => {
+    if (!conn) {
+        return res.status(500).json({ error: ' MySQL Not Connected!' });
     }
+    next();
+};
+
+//  เชื่อมต่อ MySQL ก่อนเริ่มเซิร์ฟเวอร์
+app.listen(port, async () => {
+    await initMYSQL();
+    console.log(' Server is running on port ' + port);
 });
 
-// Test DB with a specific query (example)
-app.get('/testdbnew', async (req, res) => {
-    try {
-        const [results] = await conn.query('SELECT idx FROM users');
-        res.json(results);
-    } catch (error) {
-        console.log('Error:', error.message);
-        res.status(500).json({ error: error.message });
-    }
-});
+//  ใช้ middleware `checkDBConnection` ก่อนเรียก API
+app.use(checkDBConnection);
 
-// GET /users - Fetch all users
+//  GET /users - ดึงข้อมูลผู้ใช้ทั้งหมด
 app.get('/users', async (req, res) => {
     try {
         const [results] = await conn.query('SELECT * FROM users');
         res.json(results);
     } catch (error) {
-        console.log('Error:', error.message);
+        console.error('Error:', error.message);
         res.status(500).json({ error: error.message });
     }
 });
 
-// POST /users - Create a new user
+//  POST /users - สร้างผู้ใช้ใหม่
 app.post('/users', async (req, res) => {
     try {
         let user = req.body;
-        const results = await conn.query('INSERT INTO users SET ?', user);
-        if(error.length > 0){
-            throw {
-                message: 'กรุณากรอกข้อมูลให้ครบถ้วน',
-                errors: errors
-            };
-        }
+        const [result] = await conn.query('INSERT INTO users SET ?', user);
         res.json({
-            message: 'Create user successfully',
-            data: results[0]
+            message: ' Create user successfully',
+            data: result
         });
-    } catch (error) {
-        const errorMessage = error.message || 'something went wrong';
-        const errors = error.errors || [];
-        console.error("error",error.Message)
-        res.status(500).json({
-            message: 'errorMessage',
-            errors: errors
-        })
-        
-    }
-});
-
-// GET /user/:id - Fetch user by ID
-app.get('/users/:id', async (req, res) => {
-    try {
-        let id = req.params.id;
-        let updateUser = req.body;
-        const results = await conn.query('SELECT * FROM users WHERE id = ?', id);
-        if (results[0].length == 0) {
-
-            throw {statusCode: 404, message: 'User not found'};
-        }
-        res.json(results[0][0]);
     } catch (error) {
         console.error('Error:', error.message);
         res.status(500).json({ 
-            message: "something went wrong",
-            errorMessage: error.message});
+            message: ' Something went wrong',
+            errorMessage: error.message 
+        });
     }
 });
 
-// PUT /user/:id - Update user by ID
-app.put('/users/:id', async (req, res) => {
-        let id = req.params.id;
-        let updateUser = req.body;
-        try {
-            let user = req.body
-            const results = await conn.query('UPDATE users SET ? WHERE id = ?', [updateUser, id]);
-            res.json({
-                message: 'Update user successfully',
-                data: results[0]
-            });
-        } catch (error) {
-            console.error('Error:', error.message);
-            res.status(500).json({ 
-                message: "something went wrong",
-                errorMessage: error.message});
-        }
-    });
-
-// DELETE /user/:id - Delete user by ID
-app.delete('/users/:id', async (req, res) => {
-    
+//  GET /users/:id - ดึงข้อมูลผู้ใช้ตาม ID
+app.get('/users/:id', async (req, res) => {
     try {
         let id = req.params.id;
-        const results = await conn.query('DELETE FROM users WHERE id = ?', id);
-            res.json({
-                message: 'Delete user successfully',
-                data: results[0]
-            });
+        const [results] = await conn.query('SELECT * FROM users WHERE id = ?', [id]);
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: ' User not found' });
+        }
+
+        res.json(results[0]);
     } catch (error) {
-        console.log('Error:', error.message);
-        res.status(500).json({ 
-            message: "something went wrong",
-            errorMessage: error.message });
+        console.error('Error:', error.message);
+        res.status(500).json({ error: error.message });
     }
 });
 
-app.listen(port, async () => {
-    await initMYSQL();
-    console.log('Http Server is running on port ' + port);
+//  PUT /users/:id - อัปเดตข้อมูลผู้ใช้
+app.put('/users/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        let updateUser = req.body;
+        const [result] = await conn.query('UPDATE users SET ? WHERE id = ?', [updateUser, id]);
+
+        res.json({
+            message: ' Update user successfully',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// DELETE /users/:id - ลบผู้ใช้
+app.delete('/users/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        const [result] = await conn.query('DELETE FROM users WHERE id = ?', [id]);
+
+        res.json({
+            message: ' Delete user successfully',
+            data: result
+        });
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ error: error.message });
+    }
 });
